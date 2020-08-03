@@ -28,7 +28,7 @@ install:
 	pip3 install -r requirements.txt
 
 run:
-	python3 ./personfinder.py
+	./personfinder.py
 
 run-verbose:
-	python3 ./personfinder.py --verbose
+	./personfinder.py --verbose
