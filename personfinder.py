@@ -102,13 +102,13 @@ def main():
     # construct the argument parser and parse the arguments
     args = parse_arguments()
 
-    if args["verbose"]:
+    if args.get("verbose"):
         log.basicConfig(level=log.DEBUG)
 
     log.debug("parsing class labels...")
     labels = {}
     log.debug("Parsing labels...")
-    for row in open(args["labels"]):
+    for row in open(args.get("labels", []):
         (classID, label) = row.strip().split(maxsplit=1)
         labels[int(classID)] = label.strip()
         log.debug("Label " + str(classID) + " = " + label)
@@ -149,7 +149,7 @@ def main():
         frame = Image.fromarray(frame)
         # make predictions on the input frame
         start = time.time()
-        results = model.detect_with_image(frame, threshold=args["confidence"],
+        results = model.detect_with_image(frame, threshold=args.get("confidence"),
                                           # Schwellwert ab dem Objekte als erkannt gelten
                                           keep_aspect_ratio=True, relative_coord=False)
         # results is a list of DetectionCandidate(label_id, score, x1, y1, x2, y2)
@@ -159,7 +159,7 @@ def main():
 
         for r in results:
             label = labels[r.label_id]  # fits label from imported labels to the result
-            if args["display"]:
+            if args.get("display"):
                 show_on_screen(frame_id, label, r, orig, starting_time, scale)
             else:
                 elapsed_time = time.time() - starting_time
