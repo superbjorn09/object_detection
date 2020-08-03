@@ -70,10 +70,10 @@ def person_detected_led_interface(results):
     if len(results) > 1:
         if person_counter > 0:
             yellow_on()
-            log.info("[INFO] Shit, there is a person, be careful!")
+            log.info("Shit, there is a person, be careful!")
         else:
             green_on()
-            log.info("[INFO] ride free, no person detected.")
+            log.info("ride free, no person detected.")
     else:
         all_off()
 
@@ -105,19 +105,19 @@ def main():
     if args["verbose"]:
         log.basicConfig(level=log.DEBUG)
 
-    log.debug("[DEBUG] parsing class labels...")
+    log.debug("parsing class labels...")
     labels = {}
-    log.debug("[DEBUG] Parsing labels...")
+    log.debug("Parsing labels...")
     for row in open(args["labels"]):
         (classID, label) = row.strip().split(maxsplit=1)
         labels[int(classID)] = label.strip()
-        log.debug("[DEBUG] Label " + str(classID) + " = " + label)
+        log.debug("Label " + str(classID) + " = " + label)
 
-    log.info("[INFO] loading parsed tfLite-model...")
+    log.info("loading parsed tfLite-model...")
     model = DetectionEngine(args["model"])
-    log.info("[INFO] starting video stream...")
+    log.info("starting video stream...")
     video_stream = VideoStream(src=0).start()
-    log.info("[INFO] loading and flashing LEDs, warming up camera...")
+    log.info("loading and flashing LEDs, warming up camera...")
     # warming up camera and meanwhile blinking LEDs
     yellow_on()
     time.sleep(1.0)
@@ -154,7 +154,7 @@ def main():
                                           keep_aspect_ratio=True, relative_coord=False)
         # results is a list of DetectionCandidate(label_id, score, x1, y1, x2, y2)
         end = time.time()
-        log.info("[INFO] - DETECTION TIME is {:.6} s".format(end-start))
+        log.info("DETECTION TIME is {:.6} s".format(end-start))
         person_detected_led_interface(results)
 
         for r in results:
@@ -163,7 +163,7 @@ def main():
                 show_on_screen(frame_id, label, r, orig, starting_time, scale)
             else:
                 elapsed_time = time.time() - starting_time
-                log.info("[INFO] fps = {:.2f}".format(frame_id / elapsed_time))
+                log.info("fps = {:.2f}".format(frame_id / elapsed_time))
 
         # show the output frame and wait for a key press
         cv2.imshow("Frame", orig)
@@ -171,7 +171,7 @@ def main():
         if key == 27 or key == "q":
             break
 
-    log.info("[INFO] - Let me clean up your mess. Good bye!")
+    log.info("Let me clean up your mess. Good bye!")
     GPIO.cleanup()
     cv2.destroyAllWindows()
     video_stream.stop()
