@@ -58,8 +58,7 @@ def parse_arguments():
     ap.add_argument("-o", "--objects", default={0}, help="objects needed, default is 0 (person)")
     ap.add_argument("-d", "--display", default=True, help="if false, there will be no display output")
     ap.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    args = vars(ap.parse_args())
-    return args
+    return vars(ap.parse_args())
 
 
 def person_detected_led_interface(results):
