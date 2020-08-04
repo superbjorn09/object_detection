@@ -20,32 +20,30 @@ import cv2
 import logging as log
 import RPi.GPIO as GPIO  # Raspi module
 
-# GPIO LED Pins
-YELLOW_PIN = 8
-GREEN_PIN = 10
 
+class GPIOHelper():
+    def __init__(self):
+        self.yellow_pin = 8
+        self.green_pin = 10
 
-# LED GPIO helper
-def light(pin, on):
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, on)
+    def light(self, pin, on = False):
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(pin, GPIO.OUT)
+        GPIO.output(pin, on)
 
+    def green_on(self):
+        self.light(self.green_pin, on = True)
+        self.light(self.yellow_pin)
 
-def green_on():
-    light(GREEN_PIN, True)
-    light(YELLOW_PIN, False)
+    def yellow_on(self):
+        self.light(self.yellow_pin)
+        self.light(self.yellow_pin, on = True)
 
+    def all_off(self):
+        self.light(self.green_pin)
+        self.light(self.yellow_pin)
 
-def yellow_on():
-    light(GREEN_PIN, False)
-    light(YELLOW_PIN, True)
-
-
-def all_off():
-    light(GREEN_PIN, False)
-    light(YELLOW_PIN, False)
-
+gpio_helper = GPIOHelper()
 
 def parse_arguments():
     ap = argparse.ArgumentParser()
@@ -68,13 +66,13 @@ def person_detected_led_interface(results):
             person_counter += 1
     if len(results) > 1:
         if person_counter > 0:
-            yellow_on()
+            gpio_helper.yellow_on()
             log.info("Shit, there is a person, be careful!")
         else:
-            green_on()
+            gpio_helper.green_on()
             log.info("ride free, no person detected.")
     else:
-        all_off()
+        gpio_helper.all_off()
 
 
 def show_on_screen(frame_id, label, r, rotated, starting_time, scale):
@@ -107,7 +105,7 @@ def main():
     log.debug("parsing class labels...")
     labels = {}
     log.debug("Parsing labels...")
-    for row in open(args.get("labels", []):
+    for row in open(args.get("labels", [])):
         (classID, label) = row.strip().split(maxsplit=1)
         labels[int(classID)] = label.strip()
         log.debug("Label " + str(classID) + " = " + label)
@@ -118,11 +116,11 @@ def main():
     video_stream = VideoStream(src=0).start()
     log.info("loading and flashing LEDs, warming up camera...")
     # warming up camera and meanwhile blinking LEDs
-    yellow_on()
+    gpio_helper.yellow_on()
     time.sleep(1.0)
-    green_on()
+    gpio_helper.green_on()
     time.sleep(0.5)
-    all_off()
+    gpio_helper.all_off()
 
     starting_time = time.time()
     frame_id = 0
